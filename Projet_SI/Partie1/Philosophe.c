@@ -57,20 +57,20 @@ int main(int argc, char * argv[]){//argc est le nombre d'argument,argv[0] pointe
     int taille=atoi(argv[1]);
     pthread_mutex_t baguette[taille];
     pthread_t phil[taille];
-
-    args_t *arg;
+    int err;
+    args_t *arg = malloc(sizeof(args_t));
     arg->taille=taille;
     
-
-    int err;
-    err=pthread_mutex_init(baguette,NULL);
-    if (err!=0){
-        error(err,"pthread_mutex_init");
+    for (int i =0; i<taille;i++){
+        err=pthread_mutex_init(&(baguette[i]),NULL);
+        if (err!=0){
+            error(err,"pthread_mutex_init");
+        }
     }
     arg->baguette=baguette;
 
     for(int i=0;i<taille;i++){
-        arg->id=&i;
+        arg-> id = &i;
         err=pthread_create(&(phil[i]),NULL,&philosophe,(void*)arg);
         if(err!=0){
             error(err,"pthread_create");
@@ -84,9 +84,11 @@ int main(int argc, char * argv[]){//argc est le nombre d'argument,argv[0] pointe
         }
         
     }
-    err=pthread_mutex_destroy(baguette);
-    if(err!=0){
-        error(err,"pthread_mutex_destroy");
+    for (int i = 0; i<taille; i++){
+        err=pthread_mutex_destroy(&(baguette[i]));
+        if(err!=0){
+            error(err,"pthread_mutex_destroy");
+        }
     }
     return(EXIT_SUCCESS);
 }
