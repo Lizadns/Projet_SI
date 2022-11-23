@@ -34,7 +34,7 @@ void* philosophe (void* arg){
     int left = id;
     int right = (left + 1) % taille; // pour si left est le dernier, celui à se droite est le premier
     int j = 0;
-    while(j<10) {//mais le problème c que il fait 100 000 d'affilé
+    while(j<100000) {
     // philosophe pense
         if(left<right) {
             pthread_mutex_lock(&baguette[left]);
