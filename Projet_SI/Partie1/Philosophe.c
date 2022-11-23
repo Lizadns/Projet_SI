@@ -9,7 +9,7 @@
 typedef struct arg {
     int taille;
     pthread_mutex_t* baguette;
-    int *id;
+    int id;
 }args_t;
 
 void error(int err, char *msg){
@@ -27,14 +27,14 @@ void mange(int id) {
 void* philosophe (void* arg){
 
     args_t* arguments = (args_t*) arg;
-    int *id=arguments->id;
+    int id=arguments->id;
     int taille = arguments->taille;
     pthread_mutex_t* baguette = arguments->baguette;
 
-    int left = *id;
+    int left = id;
     int right = (left + 1) % taille; // pour si left est le dernier, celui à se droite est le premier
     int j = 0;
-    while(j<100000) {//mais le problème c que il fait 100 000 d'affilé
+    while(j<10) {//mais le problème c que il fait 100 000 d'affilé
     // philosophe pense
         if(left<right) {
             pthread_mutex_lock(&baguette[left]);
@@ -44,7 +44,7 @@ void* philosophe (void* arg){
             pthread_mutex_lock(&baguette[right]);
             pthread_mutex_lock(&baguette[left]);
         }
-        mange(*id);
+        mange(id);
         pthread_mutex_unlock(&baguette[left]);
         pthread_mutex_unlock(&baguette[right]);
         j++;
@@ -58,8 +58,7 @@ int main(int argc, char * argv[]){//argc est le nombre d'argument,argv[0] pointe
     pthread_mutex_t baguette[taille];
     pthread_t phil[taille];
     int err;
-    args_t *arg = malloc(sizeof(args_t));
-    arg->taille=taille;
+    args_t arg[taille];
     
     for (int i =0; i<taille;i++){
         err=pthread_mutex_init(&(baguette[i]),NULL);
@@ -67,11 +66,15 @@ int main(int argc, char * argv[]){//argc est le nombre d'argument,argv[0] pointe
             error(err,"pthread_mutex_init");
         }
     }
-    arg->baguette=baguette;
+
+    for (int i =0; i<taille;i++){
+        arg[i].taille = taille;
+        arg[i].id = i;
+        arg[i].baguette = baguette;
+    }
 
     for(int i=0;i<taille;i++){
-        arg-> id = &i;
-        err=pthread_create(&(phil[i]),NULL,&philosophe,(void*)arg);
+        err=pthread_create(&(phil[i]),NULL,&philosophe,(void*)&(arg[i]));
         if(err!=0){
             error(err,"pthread_create");
         }
