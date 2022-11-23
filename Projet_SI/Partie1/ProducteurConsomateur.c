@@ -33,7 +33,7 @@ void insert_item(int item){
 }
 
 // Producteur
-void *producer(void){
+void* producer(){
     int item;
     while(countProduc<elem){
         item=rand();//produce(item) de base 
@@ -51,7 +51,7 @@ void *producer(void){
 }
 
 // Consommateur
-void *consumer(void){
+void* consumer(){
     int item;
     while(countConsum<elem){
         sem_wait(&full); // attente d'une place remplie
@@ -91,20 +91,20 @@ int main(int argc, char * argv[]){
     pthread_t consomateur[conso];
 
     for(int i=0;i<produc;i++){
-        err=pthread_create(&(producteur[i]),NULL,(void*)producer,NULL);
+        err=pthread_create(&(producteur[i]),NULL,&producer,NULL);
         if(err!=0){
             error(err,"pthread_create");
         }
     }
 
     for(int i=0;i<conso;i++){
-        err=pthread_create(&(consomateur[i]),NULL,(void*)producer,NULL);
+        err=pthread_create(&(consomateur[i]),NULL,&consumer,NULL);
         if(err!=0){
             error(err,"pthread_create");
         }
     }
 
-    for(int i=8;i>=0;i--) {
+    for(int i=produc;i>=0;i--) {
         err=pthread_join(producteur[i],NULL);
         if(err!=0){
             error(err,"pthread_join_producteur");
@@ -112,7 +112,7 @@ int main(int argc, char * argv[]){
         
     }
 
-    for(int i=8;i>=0;i--) {
+    for(int i=conso;i>=0;i--) {
         err=pthread_join(consomateur[i],NULL);
         if(err!=0){
             error(err,"pthread_join_consomateur");
