@@ -21,8 +21,8 @@ void error(int err, char *msg){
     fprintf(stderr,"%s a retourné %d, message d'erreur : %s\n", msg,err,strerror(errno));
     exit(EXIT_FAILURE);
 }
-int remov(int item){
-    int retourne = item;
+int remov(){
+    int item =buffer[out];
     out = (out +1)%8;
     return item;
 }
@@ -39,7 +39,7 @@ void* producer(){
         item=rand();//produce(item) de base 
         sem_wait(&empty); // attente d'une place libre
         pthread_mutex_lock(&mutex);
-        printf("Producteur produit");
+        printf("Producteur produit\n");
         // section critique
         insert_item(item);//utiliser des indices(2) pour savoir ou on est dans la tableau pour savoir si il a ete consumer ou pas
         for (int i=0; i<10000; i++);//pour pas que c soit trop séquentiel, on ajoute du temps
@@ -56,10 +56,9 @@ void* consumer(){
     while(countConsum<elem){
         sem_wait(&full); // attente d'une place remplie
         pthread_mutex_lock(&mutex);
-        printf("Consomateur consome");
+        printf("Consomateur consome\n");
         // section critique
-        item =buffer[out];
-        item=remov(item);
+        item=remov();
         for (int i=0; i<10000; i++);
         countConsum++;
         pthread_mutex_unlock(&mutex);
@@ -104,7 +103,7 @@ int main(int argc, char * argv[]){
         }
     }
 
-    for(int i=produc;i>=0;i--) {
+    for(int i=produc-1;i>=0;i--) {
         err=pthread_join(producteur[i],NULL);
         if(err!=0){
             error(err,"pthread_join_producteur");
@@ -112,7 +111,7 @@ int main(int argc, char * argv[]){
         
     }
 
-    for(int i=conso;i>=0;i--) {
+    for(int i=conso-1;i>=0;i--) {
         err=pthread_join(consomateur[i],NULL);
         if(err!=0){
             error(err,"pthread_join_consomateur");
