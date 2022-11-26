@@ -13,7 +13,7 @@ sem_t full;
 int buffer[8];
 int in =0;//index auquel les produceurs mettre la porchaine item
 int out = 0;//index de l'item qui va être consumer par le consomateur
-int elem = 16;//nombre d'éléments consomer et produit
+int elem = 8192;//nombre d'éléments consommé et produits
 int countProduc = 0;
 int countConsum = 0;
 

@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <errno.h>
 #include <semaphore.h>
+#include <string.h>
 
 //si un writer est prêt, on empêche un reader de lire MAIS 
 //-on les laisse terminer 
@@ -21,10 +23,19 @@ sem_t rsem;//Pour bloquer des readers
 int readcount=0;
 int writecount=0;
 
+int countr =0;
+int countw = 0;
+
+void error(int err, char *msg){
+    fprintf(stderr,"%s a retourné %d, message d'erreur : %s\n", msg,err,strerror(errno));
+    exit(EXIT_FAILURE);
+}
+
 //premier ecrivain arrive, on incrémente readCount
-void writer(void){
-    while (true){
-        prepare_data();
+void* writer(){
+    while (countw<640){
+        //prepare_data();
+        for(int i =0; i<10000; i++);
         pthread_mutex_lock(&mutex_writecount);//incremente la valeur partager
         //section critique : + writecount
         writecount=writecount+1;
@@ -37,7 +48,8 @@ void writer(void){
         //partie 2
          sem_wait(&wsem);
          //section critique, un seul writer à la fois
-         write_database();
+         //write_database();
+         for(int i =0; i<10000; i++);
          sem_post(&wsem);
 
          //partie3
@@ -47,37 +59,37 @@ void writer(void){
          if(writecount==0){
              sem_post(&rsem);//autorise les readers
          }
+         countw++;
     }
 }
 
-void reader(void)
-    {while(true)
- {
-     pthread_mutex_lock(&z);
-     //exclusion mutuelle, un seul reader en attente sur rsem
-     sem_wait(&rsem);
-
-     pthread_mutex_lock(&mutex_readcount);
-     //section critique:+readcount
-     readcount=readcount+1;
-     if(readcount==1){
-         //premier reader arrive
-         sem_wait(&wsem);
-     }
-     pthread_mutex_unlock(&mutex_readcount);
-     semp_post(&rsem);
-     pthread_mutex_unlock(&z);
-     read_database();
-     //partie2
-
-     pthread_mutex_lock(&mutex_readcount);
-     //section critique:-readcount
-     readcount=readcount-1;
-     if(readcount==0){
-         //depart du derner reader
-         sem_post(&wsem);//les écrivent peuvent ecrire
-     }
-     pthread_mutex_unlock(&mutex_readcount);
+void* reader(){
+    while(countr<2560){
+        pthread_mutex_lock(&z);
+        //exclusion mutuelle, un seul reader en attente sur rsem
+        sem_wait(&rsem);
+        pthread_mutex_lock(&mutex_readcount);
+        //section critique:+readcount
+        readcount=readcount+1;
+        if(readcount==1){
+            //premier reader arrive
+            sem_wait(&wsem);
+        }
+        pthread_mutex_unlock(&mutex_readcount);
+        sem_post(&rsem);
+        pthread_mutex_unlock(&z);
+        //read_database();
+        for(int i =0; i<10000; i++);
+        //partie2
+        pthread_mutex_lock(&mutex_readcount);
+        //section critique:-readcount
+        readcount=readcount-1;
+        if(readcount==0){
+            //depart du derner reader
+            sem_post(&wsem);//les écrivent peuvent ecrire
+        }
+        pthread_mutex_unlock(&mutex_readcount);
+        countr++;
     }
 }
 
@@ -89,11 +101,88 @@ void reader(void)
 //donc le writer n'a pas priorité
 //utiliser 3 mutex 
 
-void main(int argc, void * argv[]){
+int main(int argc, char * argv[]){
 
-    sem_init(&wsem, 0, 1);
-    sem_init(&rsem, 0, 1);
+    int err;
 
-    int nomWriters = argv[1];
-    int nomReaders = argv[2];
+    err = sem_init(&wsem, 0, 1);
+    if (err!=0){
+        error(err,"sem_init");
+    }
+
+    err = sem_init(&rsem, 0, 1);
+    if (err!=0){
+        error(err,"sem_init");
+    }
+
+    err=pthread_mutex_init(&mutex_readcount,NULL);
+    if (err!=0){
+        error(err,"pthread_mutex_init");
+    }
+    
+    err=pthread_mutex_init(&mutex_writecount,NULL);
+    if (err!=0){
+        error(err,"pthread_mutex_init");
+    }
+
+    err=pthread_mutex_init(&z,NULL);
+    if (err!=0){
+        error(err,"pthread_mutex_init");
+    }
+
+    int nomWriters = atoi(argv[1]);
+    int nomReaders = atoi(argv[2]);
+
+    pthread_t writers[nomWriters];
+    pthread_t readers[nomReaders];
+
+    for (int i =0; i<nomWriters;i ++){
+        err = pthread_create(&writers[i],NULL, &writer, NULL);
+        if(err!=0){
+            error(err,"pthread_create");
+        }
+    }
+    for (int i =0; i<nomReaders;i ++){
+        err = pthread_create(&readers[i],NULL, &reader, NULL);
+        if(err!=0){
+            error(err,"pthread_create");
+        }
+    }
+
+    for(int i = nomWriters-1; i>=0; i--){
+        err=pthread_join(writers[i],NULL);
+        if(err!=0){
+            error(err,"pthread_join_writers");
+        }
+    }
+
+    for(int i = nomReaders-1; i>=0; i--){
+        err=pthread_join(readers[i],NULL);
+        if(err!=0){
+            error(err,"pthread_join_readers");
+        }
+    }
+    err=pthread_mutex_destroy(&mutex_readcount);
+    if(err!=0){
+        error(err,"pthread_mutex_destroy");
+    }
+    err=pthread_mutex_destroy(&mutex_writecount);
+    if(err!=0){
+        error(err,"pthread_mutex_destroy");
+    }
+    err=pthread_mutex_destroy(&z);
+    if(err!=0){
+        error(err,"pthread_mutex_destroy");
+    }
+
+    err=sem_destroy(&wsem);
+    if(err!=0){
+        error(err,"sem_destroy");
+    }
+
+    err=sem_destroy(&rsem);
+    if(err!=0){
+        error(err,"sem_destroy");
+    }
+    return(EXIT_SUCCESS);
 }
