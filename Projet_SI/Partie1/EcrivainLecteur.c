@@ -11,7 +11,7 @@
 //-on les laisse terminer 
 //-si un writer est occupé, ne pas liberer la db
 // 2 sémaphores -> bloquent et 2 mutex -> protègent les values partagées
-
+//test liza
 
 pthread_mutex_t mutex_readcount; //Protège readcount
 pthread_mutex_t mutex_writecount; //Protège write count
