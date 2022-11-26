@@ -37,6 +37,7 @@ void* writer(){
         //prepare_data();
         for(int i =0; i<10000; i++);
         pthread_mutex_lock(&mutex_writecount);//incremente la valeur partager
+        //printf("j ecris");
         //section critique : + writecount
         writecount=writecount+1;
         if(writecount==1){
@@ -70,6 +71,7 @@ void* reader(){
         sem_wait(&rsem);
         pthread_mutex_lock(&mutex_readcount);
         //section critique:+readcount
+        //printf("je lis");
         readcount=readcount+1;
         if(readcount==1){
             //premier reader arrive
@@ -164,25 +166,25 @@ int main(int argc, char * argv[]){
     }
     err=pthread_mutex_destroy(&mutex_readcount);
     if(err!=0){
-        error(err,"pthread_mutex_destroy");
+        error(err,"pthread_mutex_readcount_destroy");
     }
     err=pthread_mutex_destroy(&mutex_writecount);
     if(err!=0){
-        error(err,"pthread_mutex_destroy");
+        error(err,"pthread_mutex_writecount_destroy");
     }
     err=pthread_mutex_destroy(&z);
     if(err!=0){
-        error(err,"pthread_mutex_destroy");
+        error(err,"pthread_mutex_z_destroy");
     }
 
     err=sem_destroy(&wsem);
     if(err!=0){
-        error(err,"sem_destroy");
+        error(err,"semw_destroy");
     }
 
     err=sem_destroy(&rsem);
     if(err!=0){
-        error(err,"sem_destroy");
+        error(err,"semr_destroy");
     }
     return(EXIT_SUCCESS);
 }

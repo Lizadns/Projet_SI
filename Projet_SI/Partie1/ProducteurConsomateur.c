@@ -41,8 +41,8 @@ void* producer(){
         pthread_mutex_lock(&mutex);
         printf("Producteur produit\n");
         // section critique
-        insert_item(item);//utiliser des indices(2) pour savoir ou on est dans la tableau pour savoir si il a ete consumer ou pas
         for (int i=0; i<10000; i++);//pour pas que c soit trop séquentiel, on ajoute du temps
+        insert_item(item);//utiliser des indices(2) pour savoir ou on est dans la tableau pour savoir si il a ete consumer ou pas
         countProduc++;
         pthread_mutex_unlock(&mutex);
         sem_post(&full); // une place remplie en plus
