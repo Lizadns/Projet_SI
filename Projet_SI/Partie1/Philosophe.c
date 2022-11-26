@@ -18,7 +18,7 @@ void error(int err, char *msg){
 }
 
 void mange(int id) {
-    printf("Philosophe [%d] mange\n",id);
+    //printf("Philosophe [%d] mange\n",id);
     for(int i=0;i< rand(); i++) {
     // philosophe mange
     }
@@ -34,7 +34,7 @@ void* philosophe (void* arg){
     int left = id;
     int right = (left + 1) % taille; // pour si left est le dernier, celui à se droite est le premier
     int j = 0;
-    while(j<100000) {
+    while(j<1000) {
     // philosophe pense
         if(left<right) {
             pthread_mutex_lock(&baguette[left]);

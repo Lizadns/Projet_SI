@@ -16,3 +16,8 @@ clean :
 	rm -f fec
 	rm -f PC
 	rm -f EL
+
+cleancsv :
+	rm -f mesuresPhilosophe.csv
+	rm -f mesuresProd.csv
+	rm -f mesuresEcrivain.csv
