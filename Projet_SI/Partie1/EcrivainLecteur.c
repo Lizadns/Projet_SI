@@ -47,20 +47,21 @@ void* writer(){
         pthread_mutex_unlock(&mutex_writecount);//pour que d'autre puisse incrémenter la valeurs
 
         //partie 2
-         sem_wait(&wsem);
+        sem_wait(&wsem);
          //section critique, un seul writer à la fois
          //write_database();
-         for(int i =0; i<10000; i++);
-         sem_post(&wsem);
+        for(int i =0; i<10000; i++);
+        sem_post(&wsem);
 
          //partie3
-         pthread_mutex_lock(&mutex_writecount);
+        pthread_mutex_lock(&mutex_writecount);
          //section critique: -writecount
-         writecount=writecount-1;
-         if(writecount==0){
-             sem_post(&rsem);//autorise les readers
-         }
-         countw++;
+        writecount=writecount-1;
+        if(writecount==0){
+            sem_post(&rsem);//autorise les readers
+        }
+        pthread_mutex_unlock(&mutex_writecount);
+        countw++;
     }
 }
 
