@@ -39,7 +39,7 @@ void* producer(){
         item=rand();//produce(item) de base 
         sem_wait(&empty); // attente d'une place libre
         pthread_mutex_lock(&mutex);
-        printf("Producteur produit\n");
+        //printf("Producteur produit\n");
         // section critique
         for (int i=0; i<10000; i++);//pour pas que c soit trop séquentiel, on ajoute du temps
         insert_item(item);//utiliser des indices(2) pour savoir ou on est dans la tableau pour savoir si il a ete consumer ou pas
@@ -56,7 +56,7 @@ void* consumer(){
     while(countConsum<elem){
         sem_wait(&full); // attente d'une place remplie
         pthread_mutex_lock(&mutex);
-        printf("Consomateur consome\n");
+        //printf("Consomateur consome\n");
         // section critique
         item=remov();
         for (int i=0; i<10000; i++);

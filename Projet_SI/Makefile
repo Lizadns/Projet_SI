@@ -20,4 +20,4 @@ clean :
 cleancsv :
 	rm -f mesuresPhilosophe.csv
 	rm -f mesuresProd.csv
-	rm -f mesuresEcrivain.csv
+	rm -f mesuresEL.csv
