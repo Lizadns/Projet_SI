@@ -7,13 +7,14 @@
 #include <errno.h>
 #include <string.h>
 
+#define MAX 20//nombre d'éléments consommés et produits
+#define BUFFERSIZE 8
 pthread_mutex_t mutex;
 sem_t empty;
 sem_t full;
-int buffer[8];
-int in =0;//index auquel les produceurs mettre la porchaine item
-int out = 0;//index de l'item qui va être consumer par le consomateur
-int elem = 8192;//nombre d'éléments consommé et produits
+int buffer[BUFFERSIZE];
+int in =0;//index auquel les produceurs mettent le prochain item
+int out = 0;//index de l'item qui va être consumer par le consommateur
 int countProduc = 0;
 int countConsum = 0;
 
@@ -23,58 +24,58 @@ void error(int err, char *msg){
 }
 int remov(){
     int item =buffer[out];
-    out = (out +1)%8;
+    out = (out +1)%BUFFERSIZE;
     return item;
 }
 
 void insert_item(int item){
     buffer[in]=item;
-    in = (in+1)%8;
+    in = (in+1)%BUFFERSIZE;
 }
 
 // Producteur
-void* producer(){
+void* producer(void *pno){
     int item;
-    while(countProduc<elem){
+    while(countProduc<MAX){
         item=rand();//produce(item) de base 
         sem_wait(&empty); // attente d'une place libre
         pthread_mutex_lock(&mutex);
-        //printf("Producteur produit\n");
         // section critique
+        buffer[in] = item;
+        printf("Producer %d: Insert Item %d at %d\n",*((int *)pno),buffer[in],in);
         for (int i=0; i<10000; i++);//pour pas que c soit trop séquentiel, on ajoute du temps
-        insert_item(item);//utiliser des indices(2) pour savoir ou on est dans la tableau pour savoir si il a ete consumer ou pas
-        countProduc++;
+        in = (in+1)%BUFFERSIZE;
         pthread_mutex_unlock(&mutex);
+        countProduc++;
         sem_post(&full); // une place remplie en plus
         
     }
 }
 
 // Consommateur
-void* consumer(){
-    int item;
-    while(countConsum<elem){
+void* consumer(void *cno){
+    while(countConsum<MAX){
         sem_wait(&full); // attente d'une place remplie
         pthread_mutex_lock(&mutex);
-        //printf("Consomateur consome\n");
         // section critique
-        item=remov();
+        int item = buffer[out];
+        printf("Consumer %d: Remove Item %d from %d\n",*((int *)cno),item,out);
         for (int i=0; i<10000; i++);
-        countConsum++;
+        out = (out+1)%BUFFERSIZE;
         pthread_mutex_unlock(&mutex);
+        countConsum++;
         sem_post(&empty); // une place libre en plus
         
     }
 }
 
 
-
 int main(int argc, char * argv[]){
-
+    printf("je suis là");
     pthread_mutex_init(&mutex, NULL);
     int err;
 
-    err = sem_init(&empty, 0 , 8); // buffer rempli, pshared=0 donc le semaphore est partagé entre les diff thread; valeur initiale est 8,
+    err = sem_init(&empty, 0 , BUFFERSIZE); // buffer rempli, pshared=0 donc le semaphore est partagé entre les diff thread; valeur initiale est 8,
     if (err!=0){
         error(err,"sem_init");
     }
@@ -85,19 +86,19 @@ int main(int argc, char * argv[]){
     }
 
     int produc=atoi(argv[1]);
-    int conso=atoi(argv[2]);
+    int conso=atoi(argv[1]);
     pthread_t producteur[produc];
-    pthread_t consomateur[conso];
+    pthread_t consommateur[conso];
 
     for(int i=0;i<produc;i++){
-        err=pthread_create(&(producteur[i]),NULL,&producer,NULL);
+        err=pthread_create(&(producteur[i]),NULL,&producer,(void*)&i);
         if(err!=0){
             error(err,"pthread_create");
         }
     }
-
+    
     for(int i=0;i<conso;i++){
-        err=pthread_create(&(consomateur[i]),NULL,&consumer,NULL);
+        err=pthread_create(&(consommateur[i]),NULL,&consumer,(void*)&i);
         if(err!=0){
             error(err,"pthread_create");
         }
@@ -110,11 +111,11 @@ int main(int argc, char * argv[]){
         }
         
     }
-
+    
     for(int i=conso-1;i>=0;i--) {
-        err=pthread_join(consomateur[i],NULL);
+        err=pthread_join(consommateur[i],NULL);
         if(err!=0){
-            error(err,"pthread_join_consomateur");
+            error(err,"pthread_join_consommateur");
         }
         
     }
