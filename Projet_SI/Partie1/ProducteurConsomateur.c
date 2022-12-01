@@ -7,9 +7,12 @@
 #include <errno.h>
 #include <string.h>
 
-#define MAX 20//nombre d'éléments consommés et produits
+#define MAX 8192//nombre d'éléments consommés et produits
 #define BUFFERSIZE 8
 pthread_mutex_t mutex;
+pthread_mutex_t produ;
+pthread_mutex_t consom;
+
 sem_t empty;
 sem_t full;
 int buffer[BUFFERSIZE];
@@ -22,21 +25,14 @@ void error(int err, char *msg){
     fprintf(stderr,"%s a retourné %d, message d'erreur : %s\n", msg,err,strerror(errno));
     exit(EXIT_FAILURE);
 }
-int remov(){
-    int item =buffer[out];
-    out = (out +1)%BUFFERSIZE;
-    return item;
-}
-
-void insert_item(int item){
-    buffer[in]=item;
-    in = (in+1)%BUFFERSIZE;
-}
 
 // Producteur
 void* producer(void *pno){
     int item;
+    pthread_mutex_lock(&produ);
     while(countProduc<MAX){
+        countProduc++;
+        pthread_mutex_unlock(&produ);
         item=rand();//produce(item) de base 
         sem_wait(&empty); // attente d'une place libre
         pthread_mutex_lock(&mutex);
@@ -46,7 +42,6 @@ void* producer(void *pno){
         for (int i=0; i<10000; i++);//pour pas que c soit trop séquentiel, on ajoute du temps
         in = (in+1)%BUFFERSIZE;
         pthread_mutex_unlock(&mutex);
-        countProduc++;
         sem_post(&full); // une place remplie en plus
         
     }
@@ -54,7 +49,10 @@ void* producer(void *pno){
 
 // Consommateur
 void* consumer(void *cno){
+    pthread_mutex_lock(&consom);
     while(countConsum<MAX){
+        countConsum++;
+        pthread_mutex_unlock(&consom);
         sem_wait(&full); // attente d'une place remplie
         pthread_mutex_lock(&mutex);
         // section critique
@@ -63,7 +61,6 @@ void* consumer(void *cno){
         for (int i=0; i<10000; i++);
         out = (out+1)%BUFFERSIZE;
         pthread_mutex_unlock(&mutex);
-        countConsum++;
         sem_post(&empty); // une place libre en plus
         
     }
@@ -71,8 +68,10 @@ void* consumer(void *cno){
 
 
 int main(int argc, char * argv[]){
-    printf("je suis là");
     pthread_mutex_init(&mutex, NULL);
+    pthread_mutex_init(&produ, NULL);
+    pthread_mutex_init(&consom, NULL);
+
     int err;
 
     err = sem_init(&empty, 0 , BUFFERSIZE); // buffer rempli, pshared=0 donc le semaphore est partagé entre les diff thread; valeur initiale est 8,
@@ -89,16 +88,19 @@ int main(int argc, char * argv[]){
     int conso=atoi(argv[1]);
     pthread_t producteur[produc];
     pthread_t consommateur[conso];
-
+    int arg[produc];
+    for (int i = 0; i<produc; i++){
+        arg[i]=i;
+    }
     for(int i=0;i<produc;i++){
-        err=pthread_create(&(producteur[i]),NULL,&producer,(void*)&i);
+        err=pthread_create(&(producteur[i]),NULL,&producer,(void*)&arg[i]);
         if(err!=0){
             error(err,"pthread_create");
         }
     }
     
     for(int i=0;i<conso;i++){
-        err=pthread_create(&(consommateur[i]),NULL,&consumer,(void*)&i);
+        err=pthread_create(&(consommateur[i]),NULL,&consumer,(void*)&arg[i]);
         if(err!=0){
             error(err,"pthread_create");
         }
@@ -120,6 +122,14 @@ int main(int argc, char * argv[]){
         
     }
     err=pthread_mutex_destroy(&(mutex));
+    if(err!=0){
+        error(err,"pthread_mutex_destroy");
+    }
+    err=pthread_mutex_destroy(&consom);
+    if(err!=0){
+        error(err,"pthread_mutex_destroy");
+    }
+    err=pthread_mutex_destroy(&produ);
     if(err!=0){
         error(err,"pthread_mutex_destroy");
     }
