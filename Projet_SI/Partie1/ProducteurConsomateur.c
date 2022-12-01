@@ -29,9 +29,16 @@ void error(int err, char *msg){
 // Producteur
 void* producer(void *pno){
     int item;
-    pthread_mutex_lock(&produ);
-    while(countProduc<MAX){
-        countProduc++;
+    while(true){
+        pthread_mutex_lock(&produ);
+        if(countProduc==MAX){
+            pthread_mutex_unlock(&produ);
+            break;
+        }
+        else{
+            countProduc++;
+            pthread_mutex_unlock(&produ);
+        }
         item=rand();//produce(item) de base 
         sem_wait(&empty); // attente d'une place libre
         pthread_mutex_lock(&mutex);
@@ -44,15 +51,21 @@ void* producer(void *pno){
         sem_post(&full); // une place remplie en plus
         
     }
-    pthread_mutex_unlock(&produ);
     return NULL;
 }
 
 // Consommateur
 void* consumer(void *cno){
-    pthread_mutex_lock(&consom);
-    while(countConsum<MAX){
-        countConsum++;
+    while(true){
+        pthread_mutex_lock(&consom);
+        if(countConsum==MAX){
+            pthread_mutex_unlock(&consom);
+            break;
+        }
+        else{
+            countConsum++;
+            pthread_mutex_unlock(&consom);
+        }
         sem_wait(&full); // attente d'une place remplie
         pthread_mutex_lock(&mutex);
         // section critique
@@ -64,7 +77,6 @@ void* consumer(void *cno){
         sem_post(&empty); // une place libre en plus
         
     }
-    pthread_mutex_unlock(&consom);
     return NULL;
 }
 
