@@ -17,10 +17,9 @@ void error(int err, char *msg){
     exit(EXIT_FAILURE);
 }
 
-int mange(int id) {
+void mange(int id) {
     //printf("Philosophe [%d] mange\n",id);
     //philosophe mange
-    return id;
 }
 
 void* philosophe (void* arg){
@@ -43,7 +42,7 @@ void* philosophe (void* arg){
             pthread_mutex_lock(&baguette[right]);
             pthread_mutex_lock(&baguette[left]);
         }
-        id = mange(id);
+        mange(id);
         pthread_mutex_unlock(&baguette[left]);
         pthread_mutex_unlock(&baguette[right]);
         j++;
