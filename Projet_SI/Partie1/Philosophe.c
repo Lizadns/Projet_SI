@@ -17,11 +17,10 @@ void error(int err, char *msg){
     exit(EXIT_FAILURE);
 }
 
-void mange(int id) {
+int mange(int id) {
     //printf("Philosophe [%d] mange\n",id);
-    for(int i=0;i< rand(); i++) {
-    // philosophe mange
-    }
+    //philosophe mange
+    return id;
 }
 
 void* philosophe (void* arg){
@@ -34,7 +33,7 @@ void* philosophe (void* arg){
     int left = id;
     int right = (left + 1) % taille; // pour si left est le dernier, celui à se droite est le premier
     int j = 0;
-    while(j<1000000) {
+    while(j<100000) {
     // philosophe pense
         if(left<right) {
             pthread_mutex_lock(&baguette[left]);
@@ -44,7 +43,7 @@ void* philosophe (void* arg){
             pthread_mutex_lock(&baguette[right]);
             pthread_mutex_lock(&baguette[left]);
         }
-        mange(id);
+        id = mange(id);
         pthread_mutex_unlock(&baguette[left]);
         pthread_mutex_unlock(&baguette[right]);
         j++;

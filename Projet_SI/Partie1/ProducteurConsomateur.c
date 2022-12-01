@@ -32,19 +32,20 @@ void* producer(void *pno){
     pthread_mutex_lock(&produ);
     while(countProduc<MAX){
         countProduc++;
-        pthread_mutex_unlock(&produ);
         item=rand();//produce(item) de base 
         sem_wait(&empty); // attente d'une place libre
         pthread_mutex_lock(&mutex);
         // section critique
         buffer[in] = item;
-        printf("Producer %d: Insert Item %d at %d\n",*((int *)pno),buffer[in],in);
+        //printf("Producer %d: Insert Item %d at %d\n",*((int *)pno),buffer[in],in);
         for (int i=0; i<10000; i++);//pour pas que c soit trop séquentiel, on ajoute du temps
         in = (in+1)%BUFFERSIZE;
         pthread_mutex_unlock(&mutex);
         sem_post(&full); // une place remplie en plus
         
     }
+    pthread_mutex_unlock(&produ);
+    return NULL;
 }
 
 // Consommateur
@@ -52,18 +53,19 @@ void* consumer(void *cno){
     pthread_mutex_lock(&consom);
     while(countConsum<MAX){
         countConsum++;
-        pthread_mutex_unlock(&consom);
         sem_wait(&full); // attente d'une place remplie
         pthread_mutex_lock(&mutex);
         // section critique
         int item = buffer[out];
-        printf("Consumer %d: Remove Item %d from %d\n",*((int *)cno),item,out);
+        //printf("Consumer %d: Remove Item %d from %d\n",*((int *)cno),item,out);
         for (int i=0; i<10000; i++);
         out = (out+1)%BUFFERSIZE;
         pthread_mutex_unlock(&mutex);
         sem_post(&empty); // une place libre en plus
         
     }
+    pthread_mutex_unlock(&consom);
+    return NULL;
 }
 
 
@@ -125,14 +127,6 @@ int main(int argc, char * argv[]){
     if(err!=0){
         error(err,"pthread_mutex_destroy");
     }
-    err=pthread_mutex_destroy(&consom);
-    if(err!=0){
-        error(err,"pthread_mutex_destroy");
-    }
-    err=pthread_mutex_destroy(&produ);
-    if(err!=0){
-        error(err,"pthread_mutex_destroy");
-    }
 
     err=sem_destroy(&empty);
     if(err!=0){
@@ -143,6 +137,17 @@ int main(int argc, char * argv[]){
     if(err!=0){
         error(err,"sem_destroy_full");
     }
+
+    err=pthread_mutex_destroy(&(produ));
+    if(err!=0){
+        error(err,"pthread_mutex_destroy_produ");
+    }
+
+    err=pthread_mutex_destroy(&(consom));
+    if(err!=0){
+        error(err,"pthread_mutex_destroy_consom");
+    }
+
     return(EXIT_SUCCESS);
 
 
