@@ -16,12 +16,12 @@ def moustache1(data_name, name):
     data_6=data_time[data_thread==6]
 
     fig=plt.figure()
-    plt.boxplot([data_1,data_2,data_3,data_4,data_5,data_6], labels=[1,2,3,4,5,6])
+    plt.boxplot([data_1,data_2,data_3,data_4,data_5,data_6], labels=[1,2,3,4,5,6],showmeans=True)
     plt.ylabel('Temps [s]')
     plt.ylim(bottom=0)
     plt.xlabel('Nombre de thread')
     plt.title('Boite à moustache de ' + name)
-    plt.savefig('../Projet_SI/Projet_SI/Graphe/'+name+'.png')
+    plt.savefig('../Projet_SI/Graphe/'+name+'.png')
     plt.close()
 
 def moustache(data_name, name):
@@ -37,17 +37,17 @@ def moustache(data_name, name):
     data_6=data_time[data_thread==6]
 
     fig=plt.figure()
-    plt.boxplot([data_2,data_3,data_4,data_5,data_6], labels=[2,3,4,5,6])
+    plt.boxplot([data_2,data_3,data_4,data_5,data_6], labels=[2,3,4,5,6], showmeans=True)
     plt.ylabel('Temps [s]')
     plt.ylim(bottom=0)
     plt.xlabel('Nombre de thread')
     plt.title('Boite à moustache de ' + name)
-    plt.savefig('../Projet_SI/Projet_SI/Graphe/'+name+'.png')
+    plt.savefig('../Projet_SI/Graphe/'+name+'.png')
     plt.close()
 
-moustache1('../Projet_SI/Projet_SI/mesuresEL.csv', "EcrivainsLecteurs")
-moustache('../Projet_SI/Projet_SI/mesuresPhilosophe.csv', "Philosophe")
-moustache1('../Projet_SI/Projet_SI/mesuresProd.csv', "ProducteurConsommateur")
+moustache1('mesuresEL.csv', "EcrivainsLecteurs")
+moustache('mesuresPhilosophe.csv', "Philosophe")
+moustache1('mesuresProd.csv', "ProducteurConsommateur")
 
 
 
