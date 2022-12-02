@@ -19,7 +19,7 @@ def moustache1(data_name, name):
     plt.boxplot([data_1,data_2,data_3,data_4,data_5,data_6], labels=[1,2,3,4,5,6])
     plt.ylabel('Temps [s]')
     plt.xlabel('Nombre de thread')
-    plt.title('Box plot ' + name)
+    plt.title('Boite à moustache de ' + name)
     plt.savefig('../Projet_SI/Projet_SI/Graphe/'+name+'.png')
     plt.close()
 
@@ -39,7 +39,7 @@ def moustache(data_name, name):
     plt.boxplot([data_2,data_3,data_4,data_5,data_6], labels=[2,3,4,5,6])
     plt.ylabel('Temps [s]')
     plt.xlabel('Nombre de thread')
-    plt.title('Box plot ' + name)
+    plt.title('Boite à moustache de ' + name)
     plt.savefig('../Projet_SI/Projet_SI/Graphe/'+name+'.png')
     plt.close()
 
