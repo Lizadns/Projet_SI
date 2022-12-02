@@ -15,51 +15,39 @@
     //quatrième section : déclare les modifications apportées par les instructions
     //les sections sont séparées par :
 
+void error(int err, char *msg){
+    fprintf(stderr,"%s a retourné %d, message d'erreur : %s\n", msg,err,strerror(errno));
+    exit(EXIT_FAILURE);
+}
 
 void init(){
-    asm("lock:"                     
-            ".long 0"  );
+    asm("lock: .long 0;");
 }
 
 
-void lock(){
-    asm("enter:"
-            "movl $1, %eax"              
-            "xchgl %eax, (lock)"         
-                            
-                            
-            "testl %eax, %eax"           
-            "jnz enter"                  
-            "ret");
+void mutex_lock(){
+    asm("enter: movl $1, %eax;"            
+        "xchgl %eax, (lock);"      
+        "testl %eax, %eax; "         
+        "jnz enter;"              
+        "ret;");
 }
 
 void unlock(){
-    asm("leave:"
-            "movl $0, %eax"              
-            "xchgl %eax, (lock)"         
-            "ret");
+    asm("leave: movl $0, %eax;"              
+        "xchgl %eax, (lock);"         
+        "ret;");
 }
 
 void* test_and_set(void* nombreAcces){
-
-    while(nombreAcces>0){
-        asm("lock:"                     
-            ".long 0"
-        "enter:"
-            "movl $1, %eax"              
-            "xchgl %eax, (lock)"         
-                            
-                            
-            "testl %eax, %eax"           
-            "jnz enter"                  
-            "ret"
-        "leave:"
-            "movl $0, %eax"              
-            "xchgl %eax, (lock)"         
-            "ret");
-        nombreAcces--;
+    int* a = (int*) nombreAcces;
+    for (int i =0; i< *a; i++){
+        mutex_lock();
+        //section critique
+        for (int j = 0; j<10000; j++);
+        unlock();
     }
-    
+    return NULL;
 }
 
 
@@ -70,7 +58,7 @@ int main(int argc, char * argv[]){
     int err;
 
     int acces = NOMBRE/nomThread;
-
+    init();
     pthread_t set[nomThread];
     for (int i =0; i<nomThread;i ++){
         err = pthread_create(&set[i],NULL, &test_and_set, (void*)&acces);
