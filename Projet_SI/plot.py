@@ -2,15 +2,52 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+def moustache1(data_name, name):
 
-data_Philosophe= pd.read_csv('../Projet_SI/Projet_SI/mesuresPhilosophe.csv', sep = ',')
-data_time=data_Philosophe['time']
-data_thread=data_Philosophe['thread']
+    data=pd.read_csv(data_name, sep = ',')
+    data_time=data['time']
+    data_thread=data['thread']
 
-data_1=data_time[data_thread==1]
-data_2=data_time[data_thread==2]
-data_3=data_time[data_thread==3]
-data_4=data_time[data_thread==4]
+    data_1=data_time[data_thread==1]
+    data_2=data_time[data_thread==2]
+    data_3=data_time[data_thread==3]
+    data_4=data_time[data_thread==4]
+    data_5=data_time[data_thread==5]
+    data_6=data_time[data_thread==6]
+
+    fig=plt.figure()
+    plt.boxplot([data_1,data_2,data_3,data_4,data_5,data_6], labels=[1,2,3,4,5,6])
+    plt.ylabel('Temps [s]')
+    plt.xlabel('Nombre de thread')
+    plt.title('Box plot ' + name)
+    plt.savefig('../Projet_SI/Projet_SI/Graphe/'+name+'.png')
+    plt.close()
+
+def moustache(data_name, name):
+
+    data=pd.read_csv(data_name, sep = ',')
+    data_time=data['time']
+    data_thread=data['thread']
+
+    data_2=data_time[data_thread==2]
+    data_3=data_time[data_thread==3]
+    data_4=data_time[data_thread==4]
+    data_5=data_time[data_thread==5]
+    data_6=data_time[data_thread==6]
+
+    fig=plt.figure()
+    plt.boxplot([data_2,data_3,data_4,data_5,data_6], labels=[2,3,4,5,6])
+    plt.ylabel('Temps [s]')
+    plt.xlabel('Nombre de thread')
+    plt.title('Box plot ' + name)
+    plt.savefig('../Projet_SI/Projet_SI/Graphe/'+name+'.png')
+    plt.close()
+
+moustache1('../Projet_SI/Projet_SI/mesuresEL.csv', "EcrivainsLecteurs")
+moustache('../Projet_SI/Projet_SI/mesuresPhilosophe.csv', "Philosophe")
+moustache1('../Projet_SI/Projet_SI/mesuresProd.csv', "ProducteurConsommateur")
+
+
 
 """""
 mean_1=data_1.mean()
@@ -33,27 +70,3 @@ plt.yticks(np.linspace(0,30,14))
 plt.show()
 plt.close()
 """""
-
-
-#boite à moustache Philosophe
-fig2=plt.figure()
-plt.boxplot([data_2,data_3,data_4], labels=[2,3,4])
-plt.ylabel('Time')
-plt.title('Box plot Philosophe')
-plt.show()
-plt.close()
-
-data_Pro=pd.read_csv('../Projet_SI/Projet_SI/mesuresProd.csv', sep = ',')
-data_time=data_Pro['time']
-data_thread=data_Pro['thread']
-data_1=data_time[data_thread==1]
-data_2=data_time[data_thread==2]
-data_3=data_time[data_thread==3]
-data_4=data_time[data_thread==4]
-#boite à moustache Producteur/Consommateur
-fig2=plt.figure()
-plt.boxplot([data_2,data_3,data_4], labels=[2,3,4])
-plt.ylabel('Time')
-plt.title('Box plot Producteur')
-plt.show()
-plt.close()
