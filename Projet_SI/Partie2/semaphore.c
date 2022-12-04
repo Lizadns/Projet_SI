@@ -24,24 +24,23 @@ int my_sem_init(my_sem_t* sem, int value){
 }
 
 int my_sem_wait(my_sem_t* sem){
-    if(sem->val>0){
-        sem->val --;
-    }
-    else{
-        mutex_lock(&sem->lock);
+    bool wait = true;
+    while (wait){
+        if(sem->val>0){
+            mutex_lock(&sem->lock);
+            sem->val --;
+            mutex_unlock(&sem->lock);
+            wait = false;
+        }
     }
     return 0;
 }
 
 
 int my_sem_post(my_sem_t* sem){
-    if (sem->val == 0){
-        sem->val ++;
-        mutex_unlock(&sem->lock);
-    }
-    else{
-        sem->val ++;
-    }
+    mutex_lock(&sem->lock);
+    sem->val ++;
+    mutex_unlock(&sem->lock);
     return 0;
 }
 
