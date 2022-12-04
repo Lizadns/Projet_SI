@@ -3,7 +3,7 @@
 
 make -s cleancsv 
 
-THREADS=(1 2 3 4 5 6)
+THREADS=(1 2 4 8 16 32 64)
 echo "thread,i,time" &>>mesuresProd.csv
 for thread in "${THREADS[@]}"; do
     for i in {1..5}; do
@@ -13,7 +13,7 @@ for thread in "${THREADS[@]}"; do
     done
 done
 
-THREADS=(2 3 4 5 6)
+THREADS=(2 4 8 16 32 64)
 echo "thread,i,time" &>>mesuresPhilosophe.csv
 for thread in "${THREADS[@]}"; do
     for i in {1..5}; do
@@ -23,7 +23,7 @@ for thread in "${THREADS[@]}"; do
     done
 done
 
-THREADS=(1 2 3 4 5 6)
+THREADS=(1 2 4 8 16 32 64)
 echo "thread,i,time" &>>mesuresEL.csv
 for thread in "${THREADS[@]}"; do
     thread1=$((($thread+$thread%2)/2))

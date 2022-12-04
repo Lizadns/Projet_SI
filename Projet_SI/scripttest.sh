@@ -2,7 +2,7 @@
 
 make -s cleantest
 
-THREADS=(1 2 3 4 5 6)
+THREADS=(1 2 4 8 16 32 64)
 echo "thread,i,time" &>>mesuresTestAndSet.csv
 for thread in "${THREADS[@]}"; do
     for i in {1..5}; do
