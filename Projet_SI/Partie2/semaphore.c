@@ -7,14 +7,14 @@
 #include <errno.h>
 #include <string.h>  
 
-int sem_wait(){
-    
-}
-
-int sem_init(){
+int my_sem_wait(){
 
 }
 
-int sem_post(){
+int my_sem_init(){
+
+}
+
+int my_sem_post(){
 
 }
