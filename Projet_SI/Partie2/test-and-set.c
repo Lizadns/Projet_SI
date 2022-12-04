@@ -30,7 +30,7 @@ void init(){
 void mutex_lock(){
     int* ptr = &lock;
     int b = 1;
-    printf("%d %d lock1\n", lock, b);
+    //printf("%d %d lock1\n", lock, b);
     while(b==1){
         asm volatile("xchgl %0, %1"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
         :"+r"(b)//input
@@ -38,21 +38,21 @@ void mutex_lock(){
         :"memory");
     }
     
-    printf("%d %d lock2\n", lock, b);
+    //printf("%d %d lock2\n", lock, b);
 }
 
 void unlock(){
     int b = 0;
     int* ptr = &lock;
 
-    printf("%d %d unlock1\n", lock, b);
+    //printf("%d %d unlock1\n", lock, b);
     asm volatile(
         " xchgl %0, %1"
         : "+r" (b)
         : "m" (*ptr)
         : "memory"
     );
-    printf("%d %d unlock2\n", lock, b);
+    //printf("%d %d unlock2\n", lock, b);
 }
 
 void* test_and_set(void* nombreAcces){
