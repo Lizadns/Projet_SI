@@ -16,7 +16,7 @@ tas: Partie2/test-and-set.c     # add your other object files needed to compile 
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS) -pthread
 
 tatas : Partie2/test-and-test-and-set.c
-		$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS) -pthread
+	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS) -pthread
 
 clean : 
 	rm -f fec

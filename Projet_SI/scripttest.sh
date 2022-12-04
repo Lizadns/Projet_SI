@@ -15,8 +15,8 @@ done
 echo "thread,i,time" &>>mesuresTestAndTestAndSet.csv
 for thread in "${THREADS[@]}"; do
     for i in {1..5}; do
-        make tas -s
-        /usr/bin/time -f "$thread,$i,%e" ./tas $thread  &>>mesuresTestAndTestAndSet.csv
+        make tatas -s
+        /usr/bin/time -f "$thread,$i,%e" ./tatas $thread  &>>mesuresTestAndTestAndSet.csv
         make clean -s
     done
 done

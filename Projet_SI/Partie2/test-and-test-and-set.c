@@ -22,30 +22,32 @@ void error(int err, char *msg){
 
 int lock;//si on met en long, il faut changer le l dans xchgl et testl en jsp qu elle autre lettre, peut être en r ou en q
 
-void init(){
-    lock=0;
+void mutex_init(void* lock){
+    int* ptr= (int*) lock;
+    *ptr=0;
 }
 
 
-void mutex_lock(){
-    int* ptr = &lock;
+void mutex_lock(void* lock){
+    int* ptr = (int*) lock;
     int b = 1;
     //printf("%d %d lock1\n", lock, b);
-    while(lock==1){
-        while(lock==0){
-            asm volatile("xchgl %0, %1"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
+    while(b==1){
+        asm volatile("xchgl %0, %1"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
         :"+r"(b)//input
         :"m"(*ptr)//output
         :"memory");
+        while(b && *ptr){
         }
+        
     }
     
     //printf("%d %d lock2\n", lock, b);
 }
 
-void unlock(){
+void mutex_unlock(void* lock){
     int b = 0;
-    int* ptr = &lock;
+    int* ptr = (int*) lock;
 
     //printf("%d %d unlock1\n", lock, b);
     asm volatile(
@@ -57,13 +59,13 @@ void unlock(){
     //printf("%d %d unlock2\n", lock, b);
 }
 
-void* test_and_set(void* nombreAcces){
+void* test_and_test_and_set(void* nombreAcces){
     int* a = (int*) nombreAcces;
     for (int i =0; i< *a; i++){
-        mutex_lock();
+        mutex_lock(&lock);
         //section critique
         for (int j = 0; j<10000; j++);
-        unlock();
+        mutex_unlock(&lock);
     }
     return NULL;
 }
@@ -76,10 +78,10 @@ int main(int argc, char * argv[]){
     int err;
 
     int acces = NOMBRE/nomThread;
-    init();
+    mutex_init(&lock);
     pthread_t set[nomThread];
     for (int i =0; i<nomThread;i ++){
-        err = pthread_create(&set[i],NULL, &test_and_set, (void*)&acces);
+        err = pthread_create(&set[i],NULL, &test_and_test_and_set, (void*)&acces);
         if(err!=0){
             error(err,"pthread_create");
         }
