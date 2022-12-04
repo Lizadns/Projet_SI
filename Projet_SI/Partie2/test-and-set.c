@@ -20,23 +20,40 @@ void error(int err, char *msg){
     exit(EXIT_FAILURE);
 }
 
+int lock;//si on met en long, il faut changer le l dans xchgl et testl en jsp qu elle autre lettre, peut être en r ou en q
+
 void init(){
-    asm("lock: .long 0;");
+    lock=0;
 }
 
 
 void mutex_lock(){
-    asm("enter: movl $1, %eax;"            
-        "xchgl %eax, (lock);"      
-        "testl %eax, %eax; "         
+    int* ptr = &lock;
+    int b = 1;
+    printf("%d %d lock1\n", lock, b);
+    asm volatile("enter: xchgl %0, %1;"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
+        "testl %0, %0; "  //verifie que b est bien à 0 sinon refait
         "jnz enter;"              
-        "ret;");
+        "ret;"
+        :"+r"(b)//input
+        :"m"(*ptr)//output
+        :"memory");
+    printf("%d %d lock2\n", lock, b);
 }
 
 void unlock(){
-    asm("leave: movl $0, %eax;"              
-        "xchgl %eax, (lock);"         
-        "ret;");
+    int b = 0;
+    int* ptr = &lock;
+
+    printf("%d %d unlock1\n", lock, b);
+    asm volatile(
+        " xchgl %0, %1;"
+        "ret;"
+        : "+r" (b)
+        : "m" (*ptr)
+        : "memory"
+    );
+    printf("%d %d unlock2\n", lock, b);
 }
 
 void* test_and_set(void* nombreAcces){
