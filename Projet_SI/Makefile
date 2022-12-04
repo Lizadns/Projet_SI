@@ -15,16 +15,21 @@ EL: Partie1/EcrivainLecteur.c     # add your other object files needed to compil
 tas: Partie2/test-and-set.c     # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS) -pthread
 
+tatas : Partie2/test-and-test-and-set.c
+		$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS) -pthread
+
 clean : 
 	rm -f fec
 	rm -f PC
 	rm -f EL
 	rm -f tas
+	rm -f tatas
 
 cleancsv :
 	rm -f mesuresPhilosophe.csv
 	rm -f mesuresProd.csv
 	rm -f mesuresEL.csv
 
-cleantas : 
+cleantest : 
 	rm -f mesuresTestAndSet.csv
+	rm -f mesuresTestAndTestAndSet.csv
