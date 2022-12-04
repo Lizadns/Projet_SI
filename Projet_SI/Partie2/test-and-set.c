@@ -31,13 +31,13 @@ void mutex_lock(){
     int* ptr = &lock;
     int b = 1;
     printf("%d %d lock1\n", lock, b);
-    asm volatile("enter: xchgl %0, %1;"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
-        "testl %0, %0; "  //verifie que b est bien à 0 sinon refait
-        "jnz enter;"              
-        "ret;"
+    while(b==1){
+        asm volatile("xchgl %0, %1"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
         :"+r"(b)//input
         :"m"(*ptr)//output
         :"memory");
+    }
+    
     printf("%d %d lock2\n", lock, b);
 }
 
@@ -47,8 +47,7 @@ void unlock(){
 
     printf("%d %d unlock1\n", lock, b);
     asm volatile(
-        " xchgl %0, %1;"
-        "ret;"
+        " xchgl %0, %1"
         : "+r" (b)
         : "m" (*ptr)
         : "memory"
