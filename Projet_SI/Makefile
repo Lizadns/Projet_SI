@@ -25,3 +25,6 @@ cleancsv :
 	rm -f mesuresPhilosophe.csv
 	rm -f mesuresProd.csv
 	rm -f mesuresEL.csv
+
+cleantas : 
+	rm -f mesuresTestAndSet.csv
