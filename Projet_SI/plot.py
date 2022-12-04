@@ -10,13 +10,14 @@ def moustache1(data_name, name):
 
     data_1=data_time[data_thread==1]
     data_2=data_time[data_thread==2]
-    data_3=data_time[data_thread==3]
     data_4=data_time[data_thread==4]
-    data_5=data_time[data_thread==5]
-    data_6=data_time[data_thread==6]
+    data_8=data_time[data_thread==8]
+    data_16=data_time[data_thread==16]
+    data_32=data_time[data_thread==32]
+    data_64=data_time[data_thread==64]
 
     fig=plt.figure()
-    plt.boxplot([data_1,data_2,data_3,data_4,data_5,data_6], labels=[1,2,3,4,5,6],showmeans=True)
+    plt.boxplot([data_1,data_2,data_4,data_8,data_16,data_32,data_64], labels=[1,2,4,8,16,32,64],showmeans=True)
     plt.ylabel('Temps [s]')
     plt.ylim(bottom=0)
     plt.xlabel('Nombre de thread')
@@ -31,13 +32,14 @@ def moustache(data_name, name):
     data_thread=data['thread']
 
     data_2=data_time[data_thread==2]
-    data_3=data_time[data_thread==3]
     data_4=data_time[data_thread==4]
-    data_5=data_time[data_thread==5]
-    data_6=data_time[data_thread==6]
+    data_8=data_time[data_thread==8]
+    data_16=data_time[data_thread==16]
+    data_32=data_time[data_thread==32]
+    data_64=data_time[data_thread==64]
 
     fig=plt.figure()
-    plt.boxplot([data_2,data_3,data_4,data_5,data_6], labels=[2,3,4,5,6], showmeans=True)
+    plt.boxplot([data_2,data_4,data_8,data_16,data_32,data_64], labels=[2,4,8,16,32,64],showmeans=True)
     plt.ylabel('Temps [s]')
     plt.ylim(bottom=0)
     plt.xlabel('Nombre de thread')
@@ -48,6 +50,8 @@ def moustache(data_name, name):
 moustache1('mesuresEL.csv', "EcrivainsLecteurs")
 moustache('mesuresPhilosophe.csv', "Philosophe")
 moustache1('mesuresProd.csv', "ProducteurConsommateur")
+moustache1('mesuresTestAndSet.csv', "Test-and-set")
+moustache1('mesuresTestAndTestAndSet.csv', "Test-and-test-and-set")
 
 
 
