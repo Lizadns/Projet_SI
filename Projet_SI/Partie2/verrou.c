@@ -1,4 +1,11 @@
-#include "verrou.c"
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <semaphore.h>
+#include <errno.h>
+#include <string.h>  
 
 #define NOMBRE 6400
     
@@ -26,13 +33,12 @@ void mutex_lock(void* lock){
     int b = 1;
     //printf("%d %d lock1\n", lock, b);
     while(b==1){
-        asm volatile("xchgl %0, %1"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
-        :"+r"(b)//input
-        :"m"(*ptr)//output
-        :"memory");
-        while(b==1 && *ptr){
-
-        }
+        if(*ptr==0){
+            asm volatile("xchgl %0, %1"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
+            :"+r"(b)//input
+            :"m"(*ptr)//output
+            :"memory");
+        }   
     }
     
     //printf("%d %d lock2\n", lock, b);
@@ -61,34 +67,4 @@ void* test_and_test_and_set(void* nombreAcces){
         mutex_unlock(&lock);
     }
     return NULL;
-}
-
-
-
-int main(int argc, char * argv[]){
-
-    int nomThread = atoi(argv[1]);
-    int err;
-
-    int acces = NOMBRE/nomThread;
-    mutex_init(&lock);
-    pthread_t set[nomThread];
-    for (int i =0; i<nomThread;i ++){
-        err = pthread_create(&set[i],NULL, &test_and_test_and_set, (void*)&acces);
-        if(err!=0){
-            error(err,"pthread_create");
-        }
-    }
-
-    for(int i=nomThread-1;i>=0;i--) {
-        err=pthread_join(set[i],NULL);
-        if(err!=0){
-            error(err,"pthread_join_producteur");
-        }
-        
-    }
-
-    return(EXIT_SUCCESS);
-
-
 }

@@ -6,7 +6,7 @@
 #include <semaphore.h>
 #include <errno.h>
 #include <string.h> 
-#include "test_and_set.h"
+#include "verrou.c"
 
 typedef struct my_sem {
     int lock;
