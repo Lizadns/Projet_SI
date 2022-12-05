@@ -75,7 +75,7 @@ echo "thread,i,time" &>>mesuresEL2.csv
 for thread in "${THREADS[@]}"; do
     for i in {1..5}; do
         make EL2 -s
-        /usr/bin/time -f "$thread,$i,%e" ./EL2 $thread  &>>mesuresEL2.csv
+        /usr/bin/time -f "$thread,$i,%e" ./EL2 $thread $thread  &>>mesuresEL2.csv
         make clean -s
     done
 done
