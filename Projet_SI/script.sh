@@ -13,7 +13,7 @@ for thread in "${THREADS[@]}"; do
     done
 done
 
-THREADS=(2 4 8 16 32 64)
+THREADS=(1 2 4 8 16 32 64)
 echo "thread,i,time" &>>mesuresPhilosophe.csv
 for thread in "${THREADS[@]}"; do
     for i in {1..5}; do
