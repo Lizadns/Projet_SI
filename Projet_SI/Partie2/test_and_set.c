@@ -20,40 +20,43 @@ void error(int err, char *msg){
     exit(EXIT_FAILURE);
 }
 
-int lock;//si on met en long, il faut changer le l dans xchgl et testl en jsp qu elle autre lettre, peut être en r ou en q
+int* lock;//si on met en long, il faut changer le l dans xchgl et testl en jsp qu elle autre lettre, peut être en r ou en q
 
-void mutex_init(void* lock){
-    int* ptr= (int*) lock;
-    *ptr=0;
+int mutex_init(int** lock){
+    *lock = (int*) malloc(sizeof(int));
+    if (lock == NULL){
+        return -1;
+    }
+    **lock=0;
+    return 0;
 }
 
-int test_and_set(void* lock, int val){
-    int* ptr = (int*) lock;
+int test_and_set(int* lock, int val){
     int b = val;
     asm volatile("xchgl %0, %1"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
     :"+r"(b)//input
-    :"m"(*ptr)//output
+    :"m"(*lock)//output
     :"memory");
     return b;
 }
 
-void mutex_lock(void* lock){
+void mutex_lock(int* lock){
     while(test_and_set(lock,1)){
 
     }
 }
 
-void mutex_unlock(void* lock){
+void mutex_unlock(int* lock){
     test_and_set(lock,0);
 }
 
 void* utilisation(void* nombreAcces){
     int* a = (int*) nombreAcces;
     for (int i =0; i< *a; i++){
-        mutex_lock(&lock);
+        mutex_lock(lock);
         //section critique
         for (int j = 0; j<10000; j++);
-        mutex_unlock(&lock);
+        mutex_unlock(lock);
     }
     return NULL;
 }

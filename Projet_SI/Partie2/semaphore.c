@@ -13,13 +13,13 @@ typedef struct my_sem {
     int val;
 }my_sem_t;
 
-int my_sem_init(my_sem_t* sem, int value){
-    sem = malloc(sizeof(my_sem_t));
-    if (sem == NULL){
+int my_sem_init(my_sem_t** sem, int value){
+    *sem = (my_sem_t*) malloc(sizeof(my_sem_t));
+    if (*sem == NULL){
         return -1;
     }
-    sem->val = value;
-    mutex_init(sem->lock);
+    (*sem)->val = value;
+    mutex_init(&(*sem)->lock);
     return 0;
 }
 

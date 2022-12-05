@@ -8,7 +8,7 @@
     //quatrième section : déclare les modifications apportées par les instructions
     //les sections sont séparées par :
 
-int lock;//si on met en long, il faut changer le l dans xchgl et testl en jsp qu elle autre lettre, peut être en r ou en q
+int* lock;//si on met en long, il faut changer le l dans xchgl et testl en jsp qu elle autre lettre, peut être en r ou en q
 
 
 void error(int err, char *msg){
@@ -19,10 +19,10 @@ void error(int err, char *msg){
 void* test_and_test_and_set(void* nombreAcces){
     int* a = (int*) nombreAcces;
     for (int i =0; i< *a; i++){
-        mutex_lock(&lock);
+        mutex_lock(lock);
         //section critique
         for (int j = 0; j<10000; j++);
-        mutex_unlock(&lock);
+        mutex_unlock(lock);
     }
     return NULL;
 }

@@ -11,8 +11,8 @@ int* mutex_readcount; //Protège readcount
 int* mutex_writecount; //Protège write count
 int* z;
 
-my_sem_t wsem;//Accès exclusif à la db
-my_sem_t rsem;//Pour bloquer des readers 
+my_sem_t* wsem;//Accès exclusif à la db
+my_sem_t* rsem;//Pour bloquer des readers 
 
 int readcount=0;
 int writecount=0;
@@ -36,23 +36,23 @@ void* writer(){
         writecount=writecount+1;
         if(writecount==1){
             //premier writer arrive
-            my_sem_wait(&rsem);//attends plus de readers
+            my_sem_wait(rsem);//attends plus de readers
         }
         mutex_unlock(mutex_writecount);//pour que d'autre puisse incrémenter la valeurs
 
         //partie 2
-        my_sem_wait(&wsem);
+        my_sem_wait(wsem);
          //section critique, un seul writer à la fois
          //write_database();
         for(int i =0; i<10000; i++);
-        my_sem_post(&wsem);
+        my_sem_post(wsem);
 
          //partie3
         mutex_lock(mutex_writecount);
          //section critique: -writecount
         writecount=writecount-1;
         if(writecount==0){
-            my_sem_post(&rsem);//autorise les readers
+            my_sem_post(rsem);//autorise les readers
         }
         mutex_unlock(mutex_writecount);
         countw++;
@@ -63,17 +63,17 @@ void* reader(){
     while(countr<2560){
         mutex_lock(z);
         //exclusion mutuelle, un seul reader en attente sur rsem
-        my_sem_wait(&rsem);
+        my_sem_wait(rsem);
         mutex_lock(mutex_readcount);
         //section critique:+readcount
         //printf("je lis");
         readcount=readcount+1;
         if(readcount==1){
             //premier reader arrive
-            my_sem_wait(&wsem);
+            my_sem_wait(wsem);
         }
         mutex_unlock(mutex_readcount);
-        my_sem_post(&rsem);
+        my_sem_post(rsem);
         mutex_unlock(z);
         //read_database();
         for(int i =0; i<10000; i++);
@@ -83,7 +83,7 @@ void* reader(){
         readcount=readcount-1;
         if(readcount==0){
             //depart du derner reader
-            my_sem_post(&wsem);//les écrivent peuvent ecrire
+            my_sem_post(wsem);//les écrivent peuvent ecrire
         }
         mutex_unlock(mutex_readcount);
         countr++;
@@ -112,17 +112,17 @@ int main(int argc, char * argv[]){
         error(err,"my_sem_init");
     }
 
-    err = mutex_init(mutex_readcount);
+    err = mutex_init(&mutex_readcount);
     if (err!=0){
         error(err,"pthread_mutex_init");
     }
     
-    err= mutex_init(mutex_writecount);
+    err= mutex_init(&mutex_writecount);
     if (err!=0){
         error(err,"pthread_mutex_init");
     }
 
-    err= mutex_init(z);
+    err= mutex_init(&z);
     if (err!=0){
         error(err,"pthread_mutex_init");
     }
@@ -172,12 +172,12 @@ int main(int argc, char * argv[]){
     //    error(err,"pthread_mutex_z_destroy");
     //}
 
-    err=my_sem_destroy(&wsem);
+    err=my_sem_destroy(wsem);
     if(err!=0){
         error(err,"semw_destroy");
     }
 
-    err=my_sem_destroy(&rsem);
+    err=my_sem_destroy(rsem);
     if(err!=0){
         error(err,"semr_destroy");
     }

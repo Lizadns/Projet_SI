@@ -17,12 +17,12 @@
 
 
 
-int mutex_init(int* lock){
-    lock = (int*) malloc(sizeof(int));
+int mutex_init(int** lock){
+    *lock = (int*) malloc(sizeof(int));
     if (lock == NULL){
         return -1;
     }
-    *lock=0;
+    **lock=0;
     return 0;
 }
 
@@ -40,8 +40,6 @@ void mutex_lock(int* lock){
         while(*lock){
         }
     }
-    
-    //printf("%d %d lock2\n", lock, b);
 }
 
 void mutex_unlock(int* lock){
