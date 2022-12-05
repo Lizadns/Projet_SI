@@ -9,7 +9,7 @@
 #include "test-and-test-and-set.c"
 
 typedef struct my_sem {
-    int lock;
+    int* lock;
     int val;
 }my_sem_t;
 
@@ -19,7 +19,7 @@ int my_sem_init(my_sem_t* sem, int value){
         return -1;
     }
     sem->val = value;
-    mutex_init(&sem->lock);
+    mutex_init(sem->lock);
     return 0;
 }
 
@@ -27,9 +27,9 @@ int my_sem_wait(my_sem_t* sem){
     bool wait = true;
     while (wait){
         if(sem->val>0){
-            mutex_lock(&sem->lock);
+            mutex_lock(sem->lock);
             sem->val --;
-            mutex_unlock(&sem->lock);
+            mutex_unlock(sem->lock);
             wait = false;
         }
     }
@@ -38,13 +38,14 @@ int my_sem_wait(my_sem_t* sem){
 
 
 int my_sem_post(my_sem_t* sem){
-    mutex_lock(&sem->lock);
+    mutex_lock(sem->lock);
     sem->val ++;
-    mutex_unlock(&sem->lock);
+    mutex_unlock(sem->lock);
     return 0;
 }
 
 int my_sem_destroy(my_sem_t* sem){
+    mutex_destroy(sem->lock);
     free(sem);
     return 0;
 }

@@ -1,4 +1,5 @@
 #include "semaphore.c"
+#include "test_and_set.h"
 
 //si un writer est prêt, on empêche un reader de lire MAIS 
 //-on les laisse terminer 
@@ -6,9 +7,9 @@
 // 2 sémaphores -> bloquent et 2 mutex -> protègent les values partagées
 //test liza
 
-int mutex_readcount; //Protège readcount
-int mutex_writecount; //Protège write count
-int z;
+int* mutex_readcount; //Protège readcount
+int* mutex_writecount; //Protège write count
+int* z;
 
 my_sem_t wsem;//Accès exclusif à la db
 my_sem_t rsem;//Pour bloquer des readers 
@@ -29,7 +30,7 @@ void* writer(){
     while (countw<640){
         //prepare_data();
         for(int i =0; i<10000; i++);
-        mutex_lock(&mutex_writecount);//incremente la valeur partager
+        mutex_lock(mutex_writecount);//incremente la valeur partager
         //printf("j ecris");
         //section critique : + writecount
         writecount=writecount+1;
@@ -37,7 +38,7 @@ void* writer(){
             //premier writer arrive
             my_sem_wait(&rsem);//attends plus de readers
         }
-        mutex_unlock(&mutex_writecount);//pour que d'autre puisse incrémenter la valeurs
+        mutex_unlock(mutex_writecount);//pour que d'autre puisse incrémenter la valeurs
 
         //partie 2
         my_sem_wait(&wsem);
@@ -47,23 +48,23 @@ void* writer(){
         my_sem_post(&wsem);
 
          //partie3
-        mutex_lock(&mutex_writecount);
+        mutex_lock(mutex_writecount);
          //section critique: -writecount
         writecount=writecount-1;
         if(writecount==0){
             my_sem_post(&rsem);//autorise les readers
         }
-        mutex_unlock(&mutex_writecount);
+        mutex_unlock(mutex_writecount);
         countw++;
     }
 }
 
 void* reader(){
     while(countr<2560){
-        mutex_lock(&z);
+        mutex_lock(z);
         //exclusion mutuelle, un seul reader en attente sur rsem
         my_sem_wait(&rsem);
-        mutex_lock(&mutex_readcount);
+        mutex_lock(mutex_readcount);
         //section critique:+readcount
         //printf("je lis");
         readcount=readcount+1;
@@ -71,20 +72,20 @@ void* reader(){
             //premier reader arrive
             my_sem_wait(&wsem);
         }
-        mutex_unlock(&mutex_readcount);
+        mutex_unlock(mutex_readcount);
         my_sem_post(&rsem);
-        mutex_unlock(&z);
+        mutex_unlock(z);
         //read_database();
         for(int i =0; i<10000; i++);
         //partie2
-        mutex_lock(&mutex_readcount);
+        mutex_lock(mutex_readcount);
         //section critique:-readcount
         readcount=readcount-1;
         if(readcount==0){
             //depart du derner reader
             my_sem_post(&wsem);//les écrivent peuvent ecrire
         }
-        mutex_unlock(&mutex_readcount);
+        mutex_unlock(mutex_readcount);
         countr++;
     }
 }
@@ -98,7 +99,7 @@ void* reader(){
 //utiliser 3 mutex 
 
 int main(int argc, char * argv[]){
-    printf("je suis là");
+
     int err;
 
     err = my_sem_init(&wsem, 1);
@@ -111,17 +112,17 @@ int main(int argc, char * argv[]){
         error(err,"my_sem_init");
     }
 
-    mutex_init(&mutex_readcount);
+    err = mutex_init(mutex_readcount);
     if (err!=0){
         error(err,"pthread_mutex_init");
     }
     
-    mutex_init(&mutex_writecount);
+    err= mutex_init(mutex_writecount);
     if (err!=0){
         error(err,"pthread_mutex_init");
     }
 
-    mutex_init(&z);
+    err= mutex_init(z);
     if (err!=0){
         error(err,"pthread_mutex_init");
     }
@@ -158,15 +159,15 @@ int main(int argc, char * argv[]){
             error(err,"pthread_join_readers");
         }
     }
-    //err=pthread_mutex_destroy(&mutex_readcount);
+    mutex_destroy(mutex_readcount);
     //if(err!=0){
     //    error(err,"pthread_mutex_readcount_destroy");
     //}
-    //err=pthread_mutex_destroy(&mutex_writecount);
+    mutex_destroy(mutex_writecount);
     //if(err!=0){
     //    error(err,"pthread_mutex_writecount_destroy");
     //}
-    //err=pthread_mutex_destroy(&z);
+    mutex_destroy(z);
     //if(err!=0){
     //    error(err,"pthread_mutex_z_destroy");
     //}
