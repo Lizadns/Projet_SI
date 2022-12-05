@@ -1,4 +1,5 @@
 #include "semaphore.c"
+#include "test_and_set.h"
 
 //si un writer est prêt, on empêche un reader de lire MAIS 
 //-on les laisse terminer 
