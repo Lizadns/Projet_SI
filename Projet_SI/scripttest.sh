@@ -29,3 +29,21 @@ for thread in "${THREADS[@]}"; do
         make clean -s
     done
 done
+
+echo "thread,i,time" &>>mesuresPhilosophe2.csv
+for thread in "${THREADS[@]}"; do
+    for i in {1..5}; do
+        make fec2 -s
+        /usr/bin/time -f "$thread,$i,%e" ./fec2 $thread  &>>mesuresPhilosophe2.csv
+        make clean -s
+    done
+done
+
+echo "thread,i,time" &>>mesuresEL2.csv
+for thread in "${THREADS[@]}"; do
+    for i in {1..5}; do
+        make EL2 -s
+        /usr/bin/time -f "$thread,$i,%e" ./EL2 $thread  &>>mesuresEL2.csv
+        make clean -s
+    done
+done
