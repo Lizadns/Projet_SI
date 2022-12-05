@@ -25,6 +25,9 @@ EL2: Partie2/EcrivainLecteur2.c  # add your other object files needed to compile
 fec2: Partie2/Philosophe2.c  # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS) -pthread -lrt
 
+PC2: Partie2/ProducteurConsommateur2.c  # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
+	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS) -pthread -lrt
+
 clean : 
 	rm -f fec
 	rm -f PC
@@ -32,6 +35,8 @@ clean :
 	rm -f tas
 	rm -f tatas
 	rm -f EL2
+	rm -f PC2
+	rm -f fec2
 
 cleancsv :
 	rm -f mesuresPhilosophe.csv
@@ -42,3 +47,4 @@ cleantest :
 	rm -f mesuresTestAndSet.csv
 	rm -f mesuresTestAndTestAndSet.csv
 	rm -f mesuresEL2.csv
+	rm -f mesuresPC2.csv

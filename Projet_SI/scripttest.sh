@@ -20,3 +20,12 @@ for thread in "${THREADS[@]}"; do
         make clean -s
     done
 done
+
+echo "thread,i,time" &>>mesuresPC2.csv
+for thread in "${THREADS[@]}"; do
+    for i in {1..5}; do
+        make PC2 -s
+        /usr/bin/time -f "$thread,$i,%e" ./PC2 $thread  &>>mesuresPC2.csv
+        make clean -s
+    done
+done
