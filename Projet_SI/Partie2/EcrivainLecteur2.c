@@ -1,5 +1,4 @@
 #include "semaphore.c"
-#include "test_and_set.h"
 
 //si un writer est prêt, on empêche un reader de lire MAIS 
 //-on les laisse terminer 
@@ -99,7 +98,7 @@ void* reader(){
 //utiliser 3 mutex 
 
 int main(int argc, char * argv[]){
-
+    printf("je suis là");
     int err;
 
     err = my_sem_init(&wsem, 1);
