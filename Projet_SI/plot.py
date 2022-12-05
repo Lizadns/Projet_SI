@@ -27,9 +27,9 @@ def moustache(data_name, name):
 
 moustache('mesuresEL.csv', "EcrivainsLecteurs")
 moustache('mesuresPhilosophe.csv', "Philosophe")
-moustache('mesuresProd.csv', "ProducteurConsommateur")
-moustache('mesuresTestAndSet.csv', "Test-and-set")
-moustache('mesuresTestAndTestAndSet.csv', "Test-and-test-and-set")
+moustache('mesuresPC.csv', "ProducteurConsommateur")
+moustache('mesuresTas.csv', "Test-and-set")
+moustache('mesuresTatas.csv', "Test-and-test-and-set")
 moustache('mesuresEL2.csv', "EcrivainsLecteur avec attente active")
 moustache('mesuresPC2.csv', "ProducteurConsommateur avec attente active")
 moustache('mesuresPhilosophe2.csv', "Philosophe avec attente active")
