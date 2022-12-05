@@ -33,12 +33,13 @@ void mutex_lock(void* lock){
     int b = 1;
     //printf("%d %d lock1\n", lock, b);
     while(b==1){
-        if(*ptr==0){
-            asm volatile("xchgl %0, %1"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
-            :"+r"(b)//input
-            :"m"(*ptr)//output
-            :"memory");
-        }   
+        asm volatile("xchgl %0, %1"//%0=input,%1=output  -> échange la valeur de lock et la met dans b            
+        :"+r"(b)//input
+        :"m"(*ptr)//output
+        :"memory");
+        while(b==1 && *ptr){
+
+        }
     }
     
     //printf("%d %d lock2\n", lock, b);
