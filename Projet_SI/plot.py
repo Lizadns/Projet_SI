@@ -19,6 +19,7 @@ def moustache(data_name, name):
     fig=plt.figure()
     plt.boxplot([data_1,data_2,data_4,data_8,data_16,data_32,data_64], labels=[1,2,4,8,16,32,64],showmeans=True)
     plt.ylabel('Temps [s]')
+    plt.grid(True)
     plt.ylim(bottom=0)
     plt.xlabel('Nombre de thread')
     plt.title('Boite à moustache de ' + name)
