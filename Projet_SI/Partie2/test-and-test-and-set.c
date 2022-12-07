@@ -5,9 +5,9 @@
 #include <unistd.h>
 #include <semaphore.h>
 #include <errno.h>
-#include <string.h>  
+#include <string.h>
+#include "test-and-test-and-set.h"
 
-#define NOMBRE 6400
     
     //première section instructions des assembleurs entre ""
     //deuxième section : spécification des des opérandes de sortie ds instructions

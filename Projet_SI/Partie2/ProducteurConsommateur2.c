@@ -1,4 +1,12 @@
-#include "semaphore.c"
+#include "semaphore.h"
+#include "test-and-test-and-set.h"
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h> 
 
 #define MAX 8192//nombre d'éléments consommés et produits
 #define BUFFERSIZE 8

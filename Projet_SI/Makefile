@@ -25,16 +25,16 @@ EL: Partie1/EcrivainLecteur.c     # add your other object files needed to compil
 tas: Partie2/test_and_set.c     # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS) 
 
-tatas : Partie2/main-test-and-test-and-set.c
+tatas : Partie2/main-test-and-test-and-set.c Partie2/test-and-test-and-set.o
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS)
 
-EL2: Partie2/EcrivainLecteur2.c  # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
+EL2: Partie2/EcrivainLecteur2.c Partie2/test-and-test-and-set.o Partie2/semaphore.o # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS)
 
-Philosophe2: Partie2/Philosophe2.c  # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
+Philosophe2: Partie2/Philosophe2.c Partie2/test-and-test-and-set.o Partie2/semaphore.o  # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS)
 
-PC2: Partie2/ProducteurConsommateur2.c  # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
+PC2: Partie2/ProducteurConsommateur2.c Partie2/test-and-test-and-set.o Partie2/semaphore.o  # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) -o $@ $^ $(LIBS)
 
 clean : 
@@ -46,6 +46,7 @@ clean :
 	rm -f EL2
 	rm -f PC2
 	rm -f Philosophe2
+	rm -f Partie2/*.o
 
 cleancsv :
 	rm -f mesuresPhilosophe.csv

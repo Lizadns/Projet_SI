@@ -6,12 +6,8 @@
 #include <semaphore.h>
 #include <errno.h>
 #include <string.h> 
-#include "test-and-test-and-set.c"
-
-typedef struct my_sem {
-    int* lock;
-    int val;
-}my_sem_t;
+#include "test-and-test-and-set.h"
+#include "semaphore.h"
 
 int my_sem_init(my_sem_t** sem, int value){
     *sem = (my_sem_t*) malloc(sizeof(my_sem_t));

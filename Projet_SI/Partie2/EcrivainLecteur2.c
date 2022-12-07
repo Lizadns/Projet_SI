@@ -1,5 +1,12 @@
-#include "semaphore.c"
-#include "test_and_set.h"
+#include "semaphore.h"
+#include "test-and-test-and-set.h"
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h> 
 
 //si un writer est prêt, on empêche un reader de lire MAIS 
 //-on les laisse terminer 

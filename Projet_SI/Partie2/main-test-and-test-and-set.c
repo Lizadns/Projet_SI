@@ -1,4 +1,11 @@
-#include "test-and-test-and-set.c"
+#include "test-and-test-and-set.h"
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h> 
 
 #define NOMBRE 6400
     

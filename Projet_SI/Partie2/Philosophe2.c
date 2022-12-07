@@ -5,8 +5,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-#include "semaphore.c"
-#include "test_and_set.h"
+#include "semaphore.h"
+#include "test-and-test-and-set.h"
 
 typedef struct arg {
     int taille;
