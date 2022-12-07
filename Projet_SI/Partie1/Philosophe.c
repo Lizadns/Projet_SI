@@ -19,7 +19,6 @@ void error(int err, char *msg){
 }
 
 void mange(int id) {
-    //printf("Philosophe [%d] mange\n",id);
     //philosophe mange
 }
 
@@ -103,7 +102,3 @@ int main(int argc, char * argv[]){//argc est le nombre d'argument,argv[0] pointe
     }
     return(EXIT_SUCCESS);
 }
-
-//gcc -o philo Philosophe.c -lpthread
-//./philo NombreDeThread
-//rm -f philo

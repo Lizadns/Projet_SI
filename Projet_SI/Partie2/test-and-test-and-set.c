@@ -8,13 +8,6 @@
 #include <string.h>
 #include "test-and-test-and-set.h"
 
-    
-    //première section instructions des assembleurs entre ""
-    //deuxième section : spécification des des opérandes de sortie ds instructions
-    //troisième section : contient les opérandes d'entrée
-    //quatrième section : déclare les modifications apportées par les instructions
-    //les sections sont séparées par :
-
 
 
 int mutex_init(int** lock){

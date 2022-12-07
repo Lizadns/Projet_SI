@@ -21,7 +21,6 @@ void error(int err, char *msg){
 }
 
 void mange(int id) {
-    //printf("Philosophe [%d] mange\n",id);
     //philosophe mange
 }
 
@@ -99,9 +98,6 @@ int main(int argc, char * argv[]){//argc est le nombre d'argument,argv[0] pointe
     }
     for (int i = 0; i<taille; i++){
         mutex_destroy((baguette[i]));
-        //if(err!=0){
-        //    error(err,"pthread_mutex_destroy");
-        //}
     }
     return(EXIT_SUCCESS);
 }

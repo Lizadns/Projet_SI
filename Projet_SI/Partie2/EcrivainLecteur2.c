@@ -12,7 +12,7 @@
 //-on les laisse terminer 
 //-si un writer est occupé, ne pas liberer la db
 // 2 sémaphores -> bloquent et 2 mutex -> protègent les values partagées
-//test liza
+
 
 int* mutex_readcount; //Protège readcount
 int* mutex_writecount; //Protège write count
@@ -38,7 +38,6 @@ void* writer(){
         //prepare_data();
         for(int i =0; i<10000; i++);
         mutex_lock(mutex_writecount);//incremente la valeur partager
-        //printf("j ecris");
         //section critique : + writecount
         writecount=writecount+1;
         if(writecount==1){
@@ -73,7 +72,6 @@ void* reader(){
         my_sem_wait(rsem);
         mutex_lock(mutex_readcount);
         //section critique:+readcount
-        //printf("je lis");
         readcount=readcount+1;
         if(readcount==1){
             //premier reader arrive

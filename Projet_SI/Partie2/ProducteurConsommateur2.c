@@ -46,7 +46,7 @@ void* producer(void *pno){
         // section critique
         buffer[in] = item;
         //printf("Producer %d: Insert Item %d at %d\n",*((int *)pno),buffer[in],in);
-        for (int i=0; i<10000; i++);//pour pas que c soit trop séquentiel, on ajoute du temps
+        for (int i=0; i<10000; i++);
         in = (in+1)%BUFFERSIZE;
         mutex_unlock(mutex);
         my_sem_post(full); // une place remplie en plus

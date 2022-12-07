@@ -9,18 +9,13 @@
 
 #define NOMBRE 6400
     
-    //première section instructions des assembleurs entre ""
-    //deuxième section : spécification des des opérandes de sortie ds instructions
-    //troisième section : contient les opérandes d'entrée
-    //quatrième section : déclare les modifications apportées par les instructions
-    //les sections sont séparées par :
 
 void error(int err, char *msg){
     fprintf(stderr,"%s a retourné %d, message d'erreur : %s\n", msg,err,strerror(errno));
     exit(EXIT_FAILURE);
 }
 
-int* lock;//si on met en long, il faut changer le l dans xchgl et testl en jsp qu elle autre lettre, peut être en r ou en q
+int* lock;
 
 int mutex_init(int** lock){
     *lock = (int*) malloc(sizeof(int));
