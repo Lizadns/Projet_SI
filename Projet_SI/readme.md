@@ -18,8 +18,8 @@ La deuxième partie correspond à l'implémentation des applications en utilisan
 - Le fichier main-test-and-test-and-set.c contenant la fonction de notre test-and-est-and-set ainsi que sa fonction main.
 
 A la racine de notre projet se trouvent également :
--Le fichier experiments.sh contenant notre script d'évaluation des performances
--Le fichier plot.py contenant notre code python pour compiler les différents graphes
+-Le fichier experiments.sh contenant notre script d'évaluation des performances et les stocke dans différents dossiers csv.
+-Le fichier plot.py contenant notre code python pour compiler les différents graphes.
 -Le Makefile
 
 Notre projet comprend également des fichiers headers pour faciliter l'import de certains de nos fichiers dans d'autres.
