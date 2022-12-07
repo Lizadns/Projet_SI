@@ -13,9 +13,14 @@ La deuxième partie correspond à l'implémentation des applications en utilisan
 - Le fichier Philosophe2.c contenant l'adaption de notre Philosophe.c à l'attente active.
 - Le fichier ProducteurConsommateur2.c contenant l'adaption de notre ProducteurConsommateur.c à l'attente active.
 - Le fichier sémaphore.c contenant notre implémentation de l'interface sémaphore sur la base de nos primitives d'attente active.
-- Le fichier test_and_set.c contenant notre mis en oeuvre d'un verrou par attente active sur le modèle de l'algorithme test-and-set.
+- Le fichier test_and_set.c contenant notre mise en oeuvre d'un verrou par attente active sur le modèle de l'algorithme test-and-set.
 - Le fichier test-and-test-and-set.c contenant l'implémentation d'un nouveau verrou sur le modèle de l'algorithme test-and-test-and-set.
 - Le fichier main-test-and-test-and-set.c contenant la fonction de notre test-and-est-and-set ainsi que sa fonction main.
+
+A la racine de notre projet se trouvent également :
+-Le fichier experiments.sh contenant notre script d'évaluation des performances
+-Le fichier plot.py contenant notre code python pour compiler les différents graphes
+-Le Makefile
 
 Notre projet comprend également des fichiers headers pour faciliter l'import de certains de nos fichiers dans d'autres.
 
