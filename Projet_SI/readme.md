@@ -1,4 +1,6 @@
-
+Groupe 33
+Albane Denis
+Liza Denis
 # structure du projet #
 
 Notre projet est séparé en 2 parties:
